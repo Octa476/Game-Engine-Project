@@ -1,11 +1,25 @@
-CPPC = g++
-CFLAGS = -g
+BUILD_DIR = build
 
-run: main
-	./main
+# Regula implicită (rulați doar 'make') va compila proiectul
+all: build_project
 
-main: main.cpp
-	$(CPPC) -fdiagnostics-color=always $(CFLAGS) *.cpp glad/*.c -o main -lGL -lglfw
+# Rulează configurarea CMake doar dacă folderul build nu există
+configure:
+	@if [ ! -d "$(BUILD_DIR)" ]; then \
+		cmake -S . -B $(BUILD_DIR); \
+	fi
 
+# Compilează proiectul prin CMake
+build_project: configure
+	cmake --build $(BUILD_DIR)
+
+# Regula ta preferată: compilează (dacă e nevoie) și rulează direct programul
+run: build_project
+	./$(BUILD_DIR)/main
+
+# Curăță fișierele temporare și build-ul
 clean:
-	rm -f main
+	rm -rf $(BUILD_DIR)
+
+.PHONY: all configure build_project run clean
+
