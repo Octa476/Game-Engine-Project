@@ -1,4 +1,5 @@
 BUILD_DIR = build
+EXEX = engine
 
 all: build_project
 
@@ -11,7 +12,7 @@ build_project: configure
 	cmake --build $(BUILD_DIR)
 
 run: build_project
-	./$(BUILD_DIR)/main
+	./$(BUILD_DIR)/engine
 
 clean:
 	cmake --build build --target clean
