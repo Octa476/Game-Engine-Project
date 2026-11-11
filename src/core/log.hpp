@@ -68,21 +68,6 @@ class Log {
     static inline std::mutex s_mutex;
 };
 
-class SinkFilePath {
-  public:
-    consteval SinkFilePath(const char *path) : data_{path}, m_path{path} {
-        if (!m_path.ends_with(LOG_EXTENSTION))
-            throw std::format("Every log file has to end with {}",
-                              LOG_EXTENSTION);
-    }
-
-  private:
-    const char *data_;
-    std::string_view m_path;
-
-    friend class FileSink;
-};
-
 class ConsoleSink : public LogSink {
   public:
     void write(const LogMessage &msg) override;
@@ -90,7 +75,7 @@ class ConsoleSink : public LogSink {
 
 class FileSink : public LogSink {
   public:
-    explicit FileSink(SinkFilePath path);
+    explicit FileSink(const char *path);
     ~FileSink() override;
     void flush() override;
     void write(const LogMessage &msg) override;

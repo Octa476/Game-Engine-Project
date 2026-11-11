@@ -8,9 +8,7 @@
 int main() {
     engine::Log::init();
     engine::Log::addSink<engine::ConsoleSink>();
-    engine::Log::addSink<engine::FileSink>(
-        engine::SinkFilePath{ENGINE_LOG_FILE});
-
+    engine::Log::addSink<engine::FileSink>(ENGINE_LOG_FILE);
     LOG_INFO("Engine starting");
     LOG_DEBUG("Window size: {}x{}", 1280, 720);
     LOG_ERROR("Failed to load {}", "player.gltf");

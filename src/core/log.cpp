@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
-#include <type_traits>
 
 namespace engine {
 std::chrono::steady_clock::time_point g_start;
@@ -18,22 +17,6 @@ std::string_view shortFile(const char *path) {
     std::string_view p{path};
     auto slash = p.find_last_of("/\\");
     return slash == std::string_view::npos ? p : p.substr(slash + 1);
-}
-
-namespace fs = std::filesystem;
-
-void remove_old_logs(fs::path dir) {
-    if (!fs::directory_entry(dir).exists())
-        return;
-
-    for (const auto &entry : fs::directory_iterator(dir)) {
-        if (entry.is_regular_file()) {
-            auto filename = std::string(entry.path().filename());
-
-            if (filename.ends_with(LOG_EXTENSTION))
-                fs::remove(entry);
-        }
-    }
 }
 
 std::string_view levelName(LogLevel l) {
@@ -123,12 +106,10 @@ struct FileSink::Impl {
     std::ofstream file;
 };
 
-FileSink::FileSink(SinkFilePath path) : m_impl{std::make_unique<Impl>()} {
-    std::filesystem::path p{path.data_};
+FileSink::FileSink(const char *path) : m_impl{std::make_unique<Impl>()} {
+    std::filesystem::path p{path};
 
     if (p.has_parent_path()) {
-        remove_old_logs(p.parent_path());
-
         std::error_code ec;
         std::filesystem::create_directories(p.parent_path(), ec);
         if (ec) {
@@ -140,7 +121,7 @@ FileSink::FileSink(SinkFilePath path) : m_impl{std::make_unique<Impl>()} {
 
     m_impl->file.open(p, std::ios::out | std::ios::trunc);
     if (!m_impl->file) {
-        std::fprintf(stderr, "FileSink: cannot open '%s'\n", path.data_);
+        std::fprintf(stderr, "FileSink: cannot open '%s'\n", path);
     }
 }
 
