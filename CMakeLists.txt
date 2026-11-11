@@ -32,6 +32,7 @@ FetchContent_MakeAvailable(SDL3 glm)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(engine ${SOURCES})
+target_compile_definitions(engine PRIVATE $<$<CONFIG:Debug>:ENGINE_ENABLE_LOGGING>)
 target_include_directories(engine PRIVATE src)
 target_link_libraries(engine PRIVATE SDL3::SDL3 glm::glm)
 target_compile_options(engine PRIVATE -Wall -Wextra)
